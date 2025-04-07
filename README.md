@@ -1,8 +1,21 @@
 # ViewAttributeMerge
 
-TODO: Delete this and the text below, and describe your gem
+Ruby Gem to assist in elegantly combining HTML attributes from multiple sources, with sensible priority rules and compatibility with Hotwire and ViewComponent.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/view_attribute_merge`. To experiment with that code, run `bin/console` for an interactive prompt.
+
+## Example
+```rb
+ViewAttributeMerge.call(
+  { "data-controller": "reference", class: "dark-theme" },
+  { data: { controller: "timer reference" } },
+  { class: "application__card" }
+)
+
+# becomes =>
+
+{ data: { controller: "reference timer" }, class: "dark-theme application__card" }
+
+```
 
 ## Installation
 

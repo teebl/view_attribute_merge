@@ -35,8 +35,13 @@ RSpec.describe ViewAttributeMerge do
     end
   end
 
-  context "normalized formatting" do
-    it "accepts hyphenated attributes and outputs them as nested hashes"
+  context "normalized data and aria formatting" do
+    it "accepts hyphenated attributes for data and aria elements, and outputs them as nested hashes" do
+      sample = [[{ data: { "foo": "bar" } }, { data: { "baz": "bop" } }]]
+      result = { foo: "right", bar: "accurate" }
+
+      expect(ViewAttributeMerge.mega_merge(*sample)).to eq(result)
+    end
   end
 
   context "turbo" do

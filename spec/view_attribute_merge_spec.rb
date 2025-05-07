@@ -203,6 +203,51 @@ RSpec.describe ViewAttributeMerge do
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
+
+    it "concatenates data-controller in both formats" do
+      sample = [
+        { "data-controller": "foo" },
+        { data: { controller: "bar" } }
+      ]
+      result = { data: { controller: "foo bar" } }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "concatenates data-action in both formats" do
+      sample = [
+        { "data-action": "click->foo#handle" },
+        { data: { action: "keyup->bar#handle" } }
+      ]
+      result = { data: { action: "click->foo#handle keyup->bar#handle" } }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "concatenates data-target in both formats" do
+      sample = [
+        { "data-target": "foo.element" },
+        { data: { target: "bar.element" } }
+      ]
+      result = { data: { target: "foo.element bar.element" } }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "handles mixed formats with existing values" do
+      sample = [
+        { "data-controller": "foo", data: { controller: "bar" } },
+        { "data-action": "click->foo#handle", data: { action: "keyup->bar#handle" } }
+      ]
+      result = {
+        data: {
+          controller: "foo bar",
+          action: "click->foo#handle keyup->bar#handle"
+        }
+      }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
   end
 
   context "error handling" do

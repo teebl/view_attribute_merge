@@ -25,21 +25,35 @@ module ViewAttributeMerge
       end
     end
 
+    def stimulus_attribute?(key)
+      key.to_s.start_with?("data-") &&
+        %i[controller action target].include?(key.to_s.split("-").last.to_sym)
+    end
+
+    def process_nested_data(hash)
+      hash.each do |key, value|
+        if %i[controller action target].include?(key.to_sym)
+          process_stimulus_value(key.to_sym, value)
+        else
+          @output[:data][key.to_sym] = value
+        end
+      end
+    end
+
     def process_hash(hash)
       hash.each_pair do |key, value|
         sym_key = key.to_sym
         case sym_key
         when :class
           process_css_value(value)
-        when :'data-controller'
-          process_stimulus_value(:controller, value)
-        when :'data-action'
-          process_stimulus_value(:action, value)
-        when :'data-target'
-          process_stimulus_value(:target, value)
-        when :data, :aria
-          @output[sym_key] ||= {}
-          @output[sym_key].merge!(value)
+        when :data
+          @output[:data] ||= {}
+          process_nested_data(value)
+        when :aria
+          @output[:aria] ||= {}
+          @output[:aria].merge!(value)
+        when ->(k) { stimulus_attribute?(k) }
+          process_stimulus_value(sym_key.to_s.split("-").last.to_sym, value)
         when /^data-/, /^aria-/
           process_prefixed_key(sym_key, value)
         else

@@ -35,10 +35,29 @@ RSpec.describe ViewAttributeMerge do
     end
   end
 
-  context "normalized data and aria formatting" do
-    it "accepts hyphenated attributes for data and aria elements, and outputs them as nested hashes" do
-      sample = [[{ data: { "foo": "bar" } }, { data: { "baz": "bop" } }]]
-      result = { foo: "right", bar: "accurate" }
+  context "data attributes" do
+    it "converts hyphenated data-* attributes to nested hashes" do
+      sample = [
+        { "data-controller": "controller" },
+        { "data-action": "action" }
+      ]
+      result = {
+        data: { controller: "controller", action: "action" }
+      }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+  end
+
+  context "aria attributes" do
+    it "converts hyphenated aria-* attributes to nested hashes" do
+      sample = [
+        { "aria-label": "label" },
+        { "aria-expanded": "true" }
+      ]
+      result = {
+        aria: { label: "label", expanded: "true" }
+      }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end

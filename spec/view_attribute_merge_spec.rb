@@ -127,7 +127,7 @@ RSpec.describe ViewAttributeMerge do
         { class: "baz" },
         { class: "foo qux" }
       ]
-      result = { class: "foo bar baz foo qux" }
+      result = { class: %w[foo bar baz foo qux] }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
@@ -138,7 +138,7 @@ RSpec.describe ViewAttributeMerge do
         { class: "foo" },
         { class: "foo" }
       ]
-      result = { class: "foo foo" }
+      result = { class: %w[foo foo] }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end

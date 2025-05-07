@@ -30,7 +30,7 @@ RSpec.describe ViewAttributeMerge do
     it "prioritizes values in descending order" do
       sample = [{ baz: "correct" }, [{ foo: "right" }, { foo: "wrong" }], [{ bar: "accurate" }, bar: "incorrect"],
                 { baz: "incorrect" }]
-      result = { foo: "right", bar: "accurate", baz: "incorrect" }
+      result = { foo: "right", bar: "accurate", baz: "correct" }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end

@@ -5,20 +5,22 @@ require_relative "view_attribute_merge/version"
 module ViewAttributeMerge
   class Error < StandardError; end
 
-  def self.attr_merge(*options)
+  def self.attr_merge(*sources)
     output = {}
 
-    options.reverse_each { |option_blob| process_blob(option_blob, output) }
+    sources.reverse_each { |source| process_source(source, output) }
 
     output
   end
 
-  def self.process_blob(option_blob, output)
-    case option_blob
+  def self.process_source(source, output)
+    case source
     when Hash
-      process_hash(option_blob, output)
+      process_hash(source, output)
     when Array
-      option_blob.reverse_each { |blob| process_blob(blob, output) }
+      source.reverse_each { |item| process_source(item, output) }
+    else
+      raise Error, "Unprocessable_entity: #{source}"
     end
   end
 

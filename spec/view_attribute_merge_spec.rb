@@ -44,6 +44,14 @@ RSpec.describe ViewAttributeMerge do
     end
   end
 
+  context "error handling" do
+    it "throws an error if it receives an unprocessable element" do
+      expect do
+        ViewAttributeMerge.attr_merge("foo")
+      end.to raise_error(ViewAttributeMerge::Error, /Unprocessable_entity: foo/)
+    end
+  end
+
   context "turbo" do
   end
 

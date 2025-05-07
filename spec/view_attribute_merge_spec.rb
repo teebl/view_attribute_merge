@@ -87,11 +87,48 @@ RSpec.describe ViewAttributeMerge do
     end
   end
 
-  context "error handling" do
-    it "throws an error if it receives an unprocessable element" do
-      expect do
-        ViewAttributeMerge.attr_merge("foo")
-      end.to raise_error(ViewAttributeMerge::Error, /Unprocessable_entity: foo/)
+  context "css" do
+    it "concatenates class attributes as strings" do
+      sample = [
+        { class: "foo" },
+        { class: "bar" }
+      ]
+      result = { class: "foo bar" }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "concatenates string and symbol class attributes" do
+      sample = [
+        { "class" => "foo" },
+        { class: "bar" }
+      ]
+      result = { class: "foo bar" }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "handles nil and empty class values" do
+      sample = [
+        { class: nil },
+        { class: "" },
+        { class: "foo" },
+        { class: "bar" }
+      ]
+      result = { class: "foo bar" }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "preserves order of class values" do
+      sample = [
+        { class: "foo bar" },
+        { class: "baz" },
+        { class: "foo qux" }
+      ]
+      result = { class: "foo bar baz qux" }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
   end
 
@@ -103,8 +140,11 @@ RSpec.describe ViewAttributeMerge do
     it "merges data-actions gracefully"
   end
 
-  context "css" do
-    it "merges CSS attributes gracefully" do
+  context "error handling" do
+    it "throws an error if it receives an unprocessable element" do
+      expect do
+        ViewAttributeMerge.attr_merge("foo")
+      end.to raise_error(ViewAttributeMerge::Error, /Unprocessable_entity: foo/)
     end
   end
 end

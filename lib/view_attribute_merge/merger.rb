@@ -31,6 +31,12 @@ module ViewAttributeMerge
         case sym_key
         when :class
           process_class_value(value)
+        when :'data-controller'
+          process_stimulus_value(:controller, value)
+        when :'data-action'
+          process_stimulus_value(:action, value)
+        when :'data-target'
+          process_stimulus_value(:target, value)
         when :data, :aria
           @output[sym_key] ||= {}
           @output[sym_key].merge!(value)
@@ -40,6 +46,12 @@ module ViewAttributeMerge
           @output[sym_key] = value unless @output.key?(sym_key)
         end
       end
+    end
+
+    def process_stimulus_value(type, value)
+      @output[:data] ||= {}
+      current = @output[:data][type] || ""
+      @output[:data][type] = [current, value].join(" ").strip
     end
 
     def process_class_value(value)

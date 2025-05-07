@@ -36,14 +36,14 @@ RSpec.describe ViewAttributeMerge do
     end
   end
 
-  context "data attributes" do
+  context "generic data attributes" do
     it "converts hyphenated data-* attributes to nested hashes" do
       sample = [
-        { "data-controller": "controller" },
-        { "data-action": "action" }
+        { "data-analytics": "track" },
+        { "data-tracking": "pageview" }
       ]
       result = {
-        data: { controller: "controller", action: "action" }
+        data: { analytics: "track", tracking: "pageview" }
       }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
@@ -51,11 +51,11 @@ RSpec.describe ViewAttributeMerge do
 
     it "merges nested data hashes" do
       sample = [
-        { data: { controller: "foo" } },
-        { data: { action: "bar" } }
+        { data: { analytics: "track" } },
+        { data: { tracking: "pageview" } }
       ]
       result = {
-        data: { controller: "foo", action: "bar" }
+        data: { analytics: "track", tracking: "pageview" }
       }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
@@ -148,8 +148,61 @@ RSpec.describe ViewAttributeMerge do
   end
 
   context "stimulus" do
-    it "merges data-controller attributes gracefully"
-    it "merges data-actions gracefully"
+    it "merges data-controller attributes into data hash" do
+      sample = [
+        { "data-controller": "foo" },
+        { "data-controller": "bar" }
+      ]
+      result = { data: { controller: "foo bar" } }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "merges data-action attributes into data hash" do
+      sample = [
+        { "data-action": "click->foo#handle" },
+        { "data-action": "keyup->bar#handle" }
+      ]
+      result = { data: { action: "click->foo#handle keyup->bar#handle" } }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "merges data-target attributes into data hash" do
+      sample = [
+        { "data-target": "foo.element" },
+        { "data-target": "bar.element" }
+      ]
+      result = { data: { target: "foo.element bar.element" } }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "handles existing values in stimulus attributes" do
+      sample = [
+        { "data-controller": "foo bar" },
+        { "data-controller": "baz" }
+      ]
+      result = { data: { controller: "foo bar baz" } }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "merges stimulus with other data attributes" do
+      sample = [
+        { "data-controller": "foo", "data-action": "click->foo#handle" },
+        { "data-controller": "bar", "data-custom": "value" }
+      ]
+      result = {
+        data: {
+          controller: "foo bar",
+          action: "click->foo#handle",
+          custom: "value"
+        }
+      }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
   end
 
   context "error handling" do

@@ -26,8 +26,17 @@ module ViewAttributeMerge
     end
 
     def stimulus_attribute?(key)
-      key.to_s.start_with?("data-") &&
-        %i[controller action target].include?(key.to_s.split("-").last.to_sym)
+      key = key.to_s
+      return false unless key.start_with?("data-")
+
+      parts = key.split("-")
+      if parts.size == 2
+        %w[controller action].include?(parts[1])
+      elsif parts.size == 3
+        parts.last == "target"
+      else
+        false
+      end
     end
 
     def process_nested_data(hash)

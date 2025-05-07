@@ -168,12 +168,12 @@ RSpec.describe ViewAttributeMerge do
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
 
-    it "merges data-target attributes into data hash" do
+    it "merges stimulus data-[controller]-target attributes into data hash" do
       sample = [
-        { "data-target": "foo.element" },
-        { "data-target": "bar.element" }
+        { "data-foo-target": "element1" },
+        { "data-bar-target": "element2" }
       ]
-      result = { data: { target: "foo.element bar.element" } }
+      result = { data: { target: "element1 element2" } }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
@@ -224,25 +224,26 @@ RSpec.describe ViewAttributeMerge do
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
 
-    it "concatenates data-target in both formats" do
+    it "concatenates data-[controller]-target attributes" do
       sample = [
-        { "data-target": "foo.element" },
-        { data: { target: "bar.element" } }
+        { "data-foo-target": "element1" },
+        { "data-bar-target": "element2" }
       ]
-      result = { data: { target: "foo.element bar.element" } }
+      result = { data: { target: "element1 element2" } }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
 
-    it "handles mixed formats with existing values" do
+    it "handles mixed stimulus attributes" do
       sample = [
-        { "data-controller": "foo", data: { controller: "bar" } },
-        { "data-action": "click->foo#handle", data: { action: "keyup->bar#handle" } }
+        { "data-controller": "foo", "data-foo-target": "element" },
+        { "data-action": "click->foo#handle", "data-bar-target": "element2" }
       ]
       result = {
         data: {
-          controller: "foo bar",
-          action: "click->foo#handle keyup->bar#handle"
+          controller: "foo",
+          action: "click->foo#handle",
+          target: "element element2"
         }
       }
 

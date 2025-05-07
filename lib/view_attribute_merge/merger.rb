@@ -1,9 +1,21 @@
 # frozen_string_literal: true
 
 module ViewAttributeMerge
+  # Merges HTML view attributes from multiple sources while handling special cases:
+  # - Stimulus 2.0 data attributes (controller/action/target)
+  # - Nested data/aria attributes
+  # - Class attribute concatenation
+  # - Attribute precedence (First specified wins)
   class Merger
     @output = nil
 
+    # Merges multiple attribute hashes into a single normalized hash
+    # @param sources [Array<Hash>] attribute hashes to merge
+    # @return [Hash] merged attributes with:
+    #   - Stimulus attributes concatenated
+    #   - Class attributes as arrays
+    #   - Nested data/aria attributes merged
+    #   - Later values overriding earlier ones
     def merge(*sources)
       @output = {}
 
@@ -25,6 +37,12 @@ module ViewAttributeMerge
       end
     end
 
+    # Checks if a key matches Stimulus 2.0 attribute patterns
+    # @param key [String,Symbol] attribute name to check
+    # @return [Boolean] true if key matches:
+    #   - data-controller
+    #   - data-action
+    #   - data-[controller]-target
     def stimulus_attribute?(key)
       key = key.to_s
       return false unless key.start_with?("data-")
@@ -49,6 +67,12 @@ module ViewAttributeMerge
       end
     end
 
+    # Processes a hash of attributes, handling special cases:
+    # - Class attributes become arrays
+    # - Stimulus attributes get concatenated
+    # - Nested data/aria attributes get merged
+    # - Other attributes get overwritten (first wins)
+    # @param hash [Hash] attributes to process
     def process_hash(hash)
       hash.each_pair do |key, value|
         sym_key = key.to_sym
@@ -71,6 +95,10 @@ module ViewAttributeMerge
       end
     end
 
+    # Concatenates Stimulus attribute values with spaces
+    # @param type [Symbol] :controller, :action or :target
+    # @param value [String] new value to concatenate
+    # @note Maintains existing values and joins with spaces
     def process_stimulus_value(type, value)
       @output[:data] ||= {}
       current = @output[:data][type] || ""

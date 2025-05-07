@@ -1,56 +1,67 @@
 # ViewAttributeMerge
 
-Ruby Gem to assist in elegantly combining HTML attributes from multiple sources, with sensible priority rules and compatibility with Hotwire and ViewComponent.
+A Ruby gem for merging HTML view attributes with support for Stimulus 2.0 conventions.
 
+## Features
 
-## Example
-```rb
-ViewAttributeMerge.call(
-  { "data-controller": "reference", class: "dark-theme" },
-  { data: { controller: "timer reference" } },
-  { class: "application__card" }
-)
-
-# becomes =>
-
-{ data: { controller: "reference timer" }, class: "dark-theme application__card" }
-
-```
+- Merges HTML attributes from multiple sources
+- Handles and concatenates Stimulus 2.0 data attributes:
+  - `data-controller`
+  - `data-action` 
+  - `data-[controller]-target`
+- Supports nested data/aria attributes
+- Properly concatenates class attributes
+- Maintains attribute precedence
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
-```
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+Add to your Gemfile:
+```ruby
+gem 'view_attribute_merge'
 ```
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+attributes = ViewAttributeMerge.attr_merge(
+  { class: "btn", data: { controller: "modal" } },
+  { class: "btn-primary", "data-action": "click->modal#open" },
+  { "data-modal-target": "dialog" }
+)
+
+# Returns:
+# {
+#   class: ["btn", "btn-primary"],
+#   data: {
+#     controller: "modal",
+#     action: "click->modal#open", 
+#     target: "dialog"
+#   }
+# }
+```
+
+### Stimulus 2.0 Support
+
+The gem follows Stimulus 2.0 conventions:
+- `data-controller` values are concatenated
+- `data-action` values are concatenated  
+- `data-[controller]-target` values are concatenated
+
+```ruby
+# Proper Stimulus 2.0 format:
+{ "data-controller": "controller", "data-controller-target": "element" }
+
+# Legacy format (not supported):
+{ "data-target": "controller.element" }
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/view_attribute_merge. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/view_attribute_merge/blob/main/CODE_OF_CONDUCT.md).
+After checking out the repo:
+1. Run `bin/setup`
+2. Run tests with `bundle exec rspec`
+3. Make changes with tests
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the ViewAttributeMerge project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/view_attribute_merge/blob/main/CODE_OF_CONDUCT.md).
+MIT License - see LICENSE.txt

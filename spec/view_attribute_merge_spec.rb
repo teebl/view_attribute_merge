@@ -28,8 +28,9 @@ RSpec.describe ViewAttributeMerge do
     end
 
     it "prioritizes values in descending order" do
-      sample = [[{ foo: "right" }, { foo: "wrong" }], [{ bar: "accurate" }, bar: "incorrect"]]
-      result = { foo: "right", bar: "accurate" }
+      sample = [{ baz: "correct" }, [{ foo: "right" }, { foo: "wrong" }], [{ bar: "accurate" }, bar: "incorrect"],
+                { baz: "incorrect" }]
+      result = { foo: "right", bar: "accurate", baz: "incorrect" }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
@@ -88,22 +89,22 @@ RSpec.describe ViewAttributeMerge do
   end
 
   context "css" do
-    it "concatenates class attributes as strings" do
+    it "collects class attributes and returns array" do
       sample = [
         { class: "foo" },
         { class: "bar" }
       ]
-      result = { class: "foo bar" }
+      result = { class: %w[foo bar] }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
 
-    it "concatenates string and symbol class attributes" do
+    it "collects string and symbol class attributes" do
       sample = [
         { "class" => "foo" },
         { class: "bar" }
       ]
-      result = { class: "foo bar" }
+      result = { class: %w[foo bar] }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
@@ -115,7 +116,7 @@ RSpec.describe ViewAttributeMerge do
         { class: "foo" },
         { class: "bar" }
       ]
-      result = { class: "foo bar" }
+      result = { class: %w[foo bar] }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
@@ -126,7 +127,18 @@ RSpec.describe ViewAttributeMerge do
         { class: "baz" },
         { class: "foo qux" }
       ]
-      result = { class: "foo bar baz qux" }
+      result = { class: "foo bar baz foo qux" }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "allows for duplicate classnames" do
+      # having multiple identical classnames is probably a code smell, but allowable in rare cases.
+      sample = [
+        { class: "foo" },
+        { class: "foo" }
+      ]
+      result = { class: "foo foo" }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end

@@ -30,7 +30,7 @@ module ViewAttributeMerge
         sym_key = key.to_sym
         case sym_key
         when :class
-          process_class_value(value)
+          process_css_value(value)
         when :'data-controller'
           process_stimulus_value(:controller, value)
         when :'data-action'
@@ -54,7 +54,7 @@ module ViewAttributeMerge
       @output[:data][type] = [current, value].join(" ").strip
     end
 
-    def process_class_value(value)
+    def process_css_value(value)
       return if value.nil? || value == ""
 
       @output[:class] ||= []

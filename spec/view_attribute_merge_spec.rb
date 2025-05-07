@@ -47,6 +47,18 @@ RSpec.describe ViewAttributeMerge do
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
     end
+
+    it "merges nested data hashes" do
+      sample = [
+        { data: { controller: "foo" } },
+        { data: { action: "bar" } }
+      ]
+      result = {
+        data: { controller: "foo", action: "bar" }
+      }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
   end
 
   context "aria attributes" do
@@ -57,6 +69,18 @@ RSpec.describe ViewAttributeMerge do
       ]
       result = {
         aria: { label: "label", expanded: "true" }
+      }
+
+      expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)
+    end
+
+    it "merges nested aria hashes" do
+      sample = [
+        { aria: { label: "foo" } },
+        { aria: { expanded: "true" } }
+      ]
+      result = {
+        aria: { label: "foo", expanded: "true" }
       }
 
       expect(ViewAttributeMerge.attr_merge(*sample)).to eq(result)

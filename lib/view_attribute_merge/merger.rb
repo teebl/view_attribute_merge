@@ -30,39 +30,20 @@ module ViewAttributeMerge
     end
 
     def process_hash(hash, output, class_values)
-      collect_class_values(hash, class_values)
-
       hash.each_pair do |key, value|
-        if special_key?(key)
-          merge_special_key(key, value, output)
-        elsif prefixed_key?(key)
-          process_prefixed_key(key, value, output)
+        sym_key = key.to_sym
+        case sym_key
+        when :class
+          class_values.unshift(value)
+        when :data, :aria
+          output[sym_key] ||= {}
+          output[sym_key].merge!(value)
+        when /^data-/, /^aria-/
+          process_prefixed_key(sym_key, value, output)
         else
-          output[key] = value unless class_key?(key)
+          output[sym_key] = value
         end
       end
-    end
-
-    def collect_class_values(hash, class_values)
-      class_value = hash[:class] || hash["class"]
-      class_values.unshift(class_value) if hash.key?(:class) || hash.key?("class")
-    end
-
-    def special_key?(key)
-      %i[data aria].include?(key)
-    end
-
-    def prefixed_key?(key)
-      key.to_s.start_with?("data-", "aria-")
-    end
-
-    def class_key?(key)
-      key.to_s == "class" || key == :class
-    end
-
-    def merge_special_key(key, value, output)
-      output[key] ||= {}
-      output[key].merge!(value)
     end
 
     def process_prefixed_key(key, value, output)

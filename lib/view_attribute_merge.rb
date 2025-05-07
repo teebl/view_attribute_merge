@@ -26,20 +26,25 @@ module ViewAttributeMerge
 
   def self.process_hash(hash, output)
     hash.each_pair do |key, value|
-      case key
-      when :data, :aria
-        output[key] ||= {}
-        output[key].merge!(value)
+      if %i[data aria].include?(key)
+        merge_special_key(key, value, output)
+      elsif key.to_s.start_with?("data-", "aria-")
+        process_prefixed_key(key, value, output)
       else
-        if key.to_s.start_with?("data-", "aria-")
-          prefix, *rest = key.to_s.split("-")
-          current = (output[prefix.to_sym] ||= {})
-          rest[0..-2].each { |k| current = (current[k.to_sym] ||= {}) }
-          current[rest.last.to_sym] = value
-        else
-          output[key] = value
-        end
+        output[key] = value
       end
     end
+  end
+
+  def self.merge_special_key(key, value, output)
+    output[key] ||= {}
+    output[key].merge!(value)
+  end
+
+  def self.process_prefixed_key(key, value, output)
+    prefix, *rest = key.to_s.split("-")
+    current = (output[prefix.to_sym] ||= {})
+    rest[0..-2].each { |k| current = (current[k.to_sym] ||= {}) }
+    current[rest.last.to_sym] = value
   end
 end

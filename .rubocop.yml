@@ -1,8 +1,74 @@
 AllCops:
   TargetRubyVersion: 3.1
+  NewCops: enable
+  DisplayCopNames: true
+  SuggestExtensions: false
+  Exclude:
+    - 'bin/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+
+Style/Documentation:
+  Enabled: true
+  Description: 'Document classes and modules'
+  Include:
+    - 'app/**/*.rb'
+    - 'lib/**/*.rb'
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  Description: 'Add frozen_string_literal comment'
+  EnforcedStyle: always
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+  ConsistentQuotesInMultiline: true
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
+
+require:
+  - rubocop-rspec
+
+RSpec:
+  Patterns:
+    - '**/spec/**/*_spec.rb'
+    - '**/test/**/*_spec.rb'
+
+RSpec/DescribeClass:
+  Enabled: true
+  StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/DescribeClass
+  Exclude:
+    - 'spec/rails_helper.rb'
+    - 'spec/spec_helper.rb'
+
+RSpec/ExampleLength:
+  Max: 15
+  Exclude:
+    - 'spec/features/**/*'
+
+RSpec/MultipleExpectations:
+  Max: 5
+  Exclude:
+    - 'spec/features/**/*'
+
+RSpec/NestedGroups:
+  Max: 3
+
+RSpec/ContextWording:
+  Enabled: true
+  Prefixes:
+    - 'when'
+    - 'with'
+    - 'without'
+    - 'for'
+
+RSpec/EmptyLineAfterExample:
+  Enabled: true
+
+RSpec/EmptyLineAfterFinalLet:
+  Enabled: true
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'

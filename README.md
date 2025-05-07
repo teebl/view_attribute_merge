@@ -58,9 +58,34 @@ The gem follows Stimulus 2.0 conventions:
 ## Development
 
 After checking out the repo:
-1. Run `bin/setup`
-2. Run tests with `bundle exec rspec`
-3. Make changes with tests
+1. Run `bin/setup` to install dependencies
+2. Run `bundle exec rspec` to execute tests
+3. Run `bundle exec rubocop` to check code style
+4. Run `bundle exec standardrb` to verify Standard Ruby style
+
+### Code Quality
+
+The project uses:
+- [Rubocop](https://github.com/rubocop/rubocop) for linting
+- [Standard](https://github.com/testdouble/standard) for formatting
+- [SimpleCov](https://github.com/simplecov-ruby/simplecov) for test coverage (minimum 90%)
+- [Solargraph](https://github.com/castwide/solargraph) for documentation
+
+### Test Coverage
+
+To generate a coverage report:
+```bash
+COVERAGE=true bundle exec rspec
+```
+Open `coverage/index.html` to view the report.
+
+### Contributing
+
+1. Fork the project
+2. Create a feature branch
+3. Add tests for your changes
+4. Ensure all tests pass and coverage remains at 90%+
+5. Submit a pull request
 
 ## License
 

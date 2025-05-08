@@ -26,9 +26,6 @@ RSpec.configure do |config|
   # Seed global randomization in this process using the `--seed` CLI option
   Kernel.srand config.seed
 
-  # Filter lines from Rails gems in backtraces
-  config.filter_rails_from_backtrace!
-
   # Shared context and helper methods
   config.shared_context_metadata_behavior = :apply_to_host_groups
 end

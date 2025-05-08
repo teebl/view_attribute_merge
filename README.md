@@ -35,7 +35,7 @@ attributes = ViewAttributeMerge.attr_merge(
 #   data: {
 #     controller: "modal",
 #     action: "click->modal#open", 
-#     "modal-target": "dialog"
+#     target: "dialog"
 #   }
 # }
 ```
